@@ -1,18 +1,39 @@
 import { useMutation } from 'convex/react';
 import * as ImagePicker from 'expo-image-picker';
 import { ImagePickerAsset } from 'expo-image-picker';
-import { Stack } from 'expo-router';
-import { useState } from 'react';
-import { Button, View, TextInput, Text, Image } from 'react-native';
+import * as Location from 'expo-location';
+import { router } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { Button, Text, TextInput, View } from 'react-native';
+import MapThumbnail from '~/components/MapThumbnail';
 
+import Parallax from '~/components/Parallax';
 import { api } from '~/convex/_generated/api';
 
 export default function AddItemScreen() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [image, setImage] = useState<ImagePickerAsset | null>(null);
-  const generateUploadUrl = useMutation(api.messages.generateUploadUrl);
-  const sendImage = useMutation(api.messages.sendImage);
+  const generateUploadUrl = useMutation(api.items.generateUploadUrl);
+  const sendImage = useMutation(api.items.sendImage);
+
+  const [location, setLocation] = useState<Location.LocationObject | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function getCurrentLocation() {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+    }
+
+    getCurrentLocation();
+  }, []);
 
   const pickImage = async (useCamera: boolean) => {
     // Request permission
@@ -31,13 +52,13 @@ export default function AddItemScreen() {
           mediaTypes: ImagePicker.MediaTypeOptions.Images,
           allowsEditing: true,
           aspect: [4, 3],
-          quality: 0.5,
+          quality: 0.3,
         })
       : await ImagePicker.launchImageLibraryAsync({
           mediaTypes: ImagePicker.MediaTypeOptions.Images,
           allowsEditing: true,
           aspect: [4, 3],
-          quality: 0.5,
+          quality: 0.3,
         });
 
     if (!result.canceled) {
@@ -57,53 +78,41 @@ export default function AddItemScreen() {
       body: imageFile,
     });
     const { storageId } = await result.json();
-    await sendImage({ storageId, author: name });
-
-    // TODO: Implement form submission
+    await sendImage({
+      storageId,
+      name,
+      description,
+      location: { lat: location?.coords.latitude!, lng: location?.coords.longitude! },
+    });
+    router.replace('/');
   };
 
   return (
-    <View className="flex-1 p-4">
-      <Stack.Screen options={{ title: 'Add New Item' }} />
-
-      <View className="space-y-4">
-        <View>
-          <Text className="mb-1 text-gray-700">Name</Text>
+    <View className="flex-1">
+      <Parallax imageUrl={image?.uri} onBack={() => router.back()} onImagePress={pickImage}>
+        <View className="mb-4">
           <TextInput
-            className="rounded-md border border-gray-300 p-2"
+            className="rounded-md p-2 text-3xl"
             value={name}
             onChangeText={setName}
             placeholder="Enter item name"
           />
         </View>
 
-        <View>
-          <Text className="mb-1 text-gray-700">Description</Text>
+        <View className="mb-4">
           <TextInput
-            className="h-24 rounded-md border border-gray-300 p-2"
+            className="rounded-md bg-gray-100 p-2"
             value={description}
             onChangeText={setDescription}
             placeholder="Enter item description"
             multiline
-            numberOfLines={4}
           />
         </View>
 
-        <View className="flex-row space-x-2">
-          <Button title="Pick from Gallery" onPress={() => pickImage(false)} />
-          <Button title="Take Photo" onPress={() => pickImage(true)} />
-        </View>
-
-        {image && (
-          <Image
-            source={{ uri: image.uri }}
-            className="h-24 w-full rounded-md"
-            resizeMode="cover"
-          />
-        )}
+        <MapThumbnail lat={location?.coords.latitude!} lng={location?.coords.longitude!} />
 
         <Button title="Submit" onPress={handleSubmit} disabled={!name || !description} />
-      </View>
+      </Parallax>
     </View>
   );
 }

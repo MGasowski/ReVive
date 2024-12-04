@@ -47,6 +47,7 @@ const DrawerLayout = () => {
           <Drawer.Screen
             name="add-item"
             options={{
+              headerShown: false,
               headerTitle: 'Add Item',
               drawerLabel: 'Add Item',
               drawerIcon: ({ size, color }) => (
@@ -54,6 +55,7 @@ const DrawerLayout = () => {
               ),
             }}
           />
+          <Drawer.Screen name="[id]" options={{ headerShown: false }} />
         </Drawer>
       </Authenticated>
       <Unauthenticated>
