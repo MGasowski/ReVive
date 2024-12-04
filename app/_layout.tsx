@@ -1,33 +1,20 @@
 import '../global.css';
 
-import { Stack } from 'expo-router';
-import { useAtom } from 'jotai';
-import { useCallback, useEffect, useState } from 'react';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { loadAsync } from 'expo-font';
+import { Stack } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-import { authStore } from '~/store/auth';
-import ConvexProvider from '~/utils/convex';
-import { supabase } from '~/utils/supabase';
 import Splash from '~/components/Splash';
+import ConvexProvider from '~/utils/convex';
 
 export const unstable_settings = {
   initialRouteName: '(auth)',
 };
 
 export default function RootLayout() {
-  const [, setSession] = useAtom(authStore);
   const [isAppReady, setIsAppReady] = useState(false);
 
-  useEffect(() => {
-    const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (session) setSession(session);
-      else setSession(undefined);
-    });
-    return () => {
-      data.subscription.unsubscribe();
-    };
-  }, []);
   useEffect(() => {
     const loadFonts = async () => {
       try {

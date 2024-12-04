@@ -5,7 +5,7 @@ import {
   DrawerContentScrollView,
   DrawerItemList,
 } from '@react-navigation/drawer';
-import { Authenticated, Unauthenticated } from 'convex/react';
+import { Authenticated, Unauthenticated, useQuery } from 'convex/react';
 import { Link, Redirect } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
 import { View } from 'react-native';
@@ -13,8 +13,13 @@ import { View } from 'react-native';
 import { HeaderButton } from '../../components/HeaderButton';
 
 import { Button } from '~/components/Button';
+import Text from '~/components/Text';
+import { api } from '~/convex/_generated/api';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const DrawerLayout = () => {
+  const user = useQuery(api.user.currentUser);
+  const { top } = useSafeAreaInsets();
   return (
     <>
       <Authenticated>
@@ -26,6 +31,13 @@ const DrawerLayout = () => {
               drawerLabel: 'Home',
               drawerIcon: ({ size, color }) => (
                 <Ionicons name="home-outline" size={size} color={color} />
+              ),
+
+              header: () => (
+                <View className="px-6 " style={{ paddingTop: top }}>
+                  <Text className="text-accent text-lg">Good Morning</Text>
+                  <Text className="text-accent text-2xl font-semibold">{user?.name}</Text>
+                </View>
               ),
             }}
           />

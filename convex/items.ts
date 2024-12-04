@@ -18,10 +18,11 @@ export const sendImage = mutation({
 
   handler: async (ctx, args) => {
     const author = await ctx.auth.getUserIdentity();
+    console.log({ author });
     await ctx.db.insert('items', {
       body: args.storageId,
       name: args.name,
-      author: author?.name ?? 'Anonymous',
+      author: author?.subject ?? 'Anonymous',
       description: args.description,
       location: args.location,
       format: 'image',
@@ -68,7 +69,7 @@ export const myList = query({
     const author = await ctx.auth.getUserIdentity();
     const messages = await ctx.db
       .query('items')
-      .filter((q) => q.eq(q.field('author'), author?.name))
+      .filter((q) => q.eq(q.field('author'), author?.subject))
       .collect();
     return Promise.all(
       messages.map(async (message) => ({
