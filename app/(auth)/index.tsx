@@ -1,72 +1,79 @@
 import { useAuthActions } from '@convex-dev/auth/dist/react';
+import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { Button, StyleSheet, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, View } from 'react-native';
+import Animated, { SlideInDown } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import { Button } from '~/components/Button';
+import Text from '~/components/Text';
+import TextInput from '~/components/TextInput';
 
 const Login = () => {
   const { signIn } = useAuthActions();
   const [step, setStep] = useState<'signUp' | 'signIn'>('signIn');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { top } = useSafeAreaInsets();
 
   return (
-    <View>
-      <TextInput
-        placeholder="Email"
-        onChangeText={setEmail}
-        value={email}
-        inputMode="email"
-        autoCapitalize="none"
-      />
-      <TextInput
-        placeholder="Password"
-        onChangeText={setPassword}
-        value={password}
-        secureTextEntry
-      />
-      <Button
-        title={step === 'signIn' ? 'Sign in' : 'Sign up'}
-        onPress={() => {
-          signIn('password', { email, password, flow: step });
-        }}
-      />
-      <Button
-        title={step === 'signIn' ? 'Sign up instead' : 'Sign in instead'}
-        onPress={() => setStep(step === 'signIn' ? 'signUp' : 'signIn')}
-      />
+    <View className="flex-1 items-center bg-[#70B9BE]" style={{ paddingTop: top }}>
+      <View className="w-full items-end pr-4">
+        <View className=" rounded-lg p-3">
+          <Text className="font-semibold text-white">Register</Text>
+        </View>
+      </View>
+      <Text className="font-Poppins h-auto pt-4 text-5xl font-bold text-white">ReVive</Text>
+      <Text className="text-lg text-white">Give your items a second life!</Text>
+      <Animated.View
+        entering={SlideInDown}
+        className="mt-16 w-full flex-1  items-center rounded-t-3xl bg-white/25 pt-4">
+        <KeyboardAvoidingView
+          behavior="padding"
+          className=" w-full flex-1  items-center rounded-t-3xl bg-white ">
+          <View className="w-full gap-4 p-4">
+            <View className="mb-8 w-full flex-row gap-4">
+              <View className="bg-accent mt-2 flex-1 flex-row items-center justify-center gap-4 rounded-lg p-2">
+                <Ionicons name="logo-google" size={16} color="white" />
+                <Text className="text-white">Google</Text>
+              </View>
+              <View className="bg-accent mt-2 flex-1 flex-row items-center justify-center gap-4 rounded-lg p-2">
+                <Ionicons name="logo-google" size={16} color="white" />
+                <Text className="text-white">Facebook</Text>
+              </View>
+            </View>
+            <TextInput
+              placeholder="Email"
+              onChangeText={setEmail}
+              value={email}
+              inputMode="email"
+              autoCapitalize="none"
+            />
+            <TextInput
+              placeholder="Password"
+              onChangeText={setPassword}
+              value={password}
+              secureTextEntry
+            />
+          </View>
+          <View className="w-full px-4">
+            <Button
+              className="w-full"
+              title={step === 'signIn' ? 'Sign in' : 'Sign up'}
+              onPress={() => {
+                signIn('password', { email, password, flow: step });
+              }}
+            />
+            <Text className="text-primary p-4 text-center text-lg">Create New Account</Text>
+          </View>
+        </KeyboardAvoidingView>
+        {/* <Button
+          title={step === 'signIn' ? 'Sign up instead' : 'Sign in instead'}
+          onPress={() => setStep(step === 'signIn' ? 'signUp' : 'signIn')}
+        /> */}
+      </Animated.View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 200,
-    padding: 20,
-    backgroundColor: '#151515',
-  },
-  header: {
-    fontSize: 30,
-    textAlign: 'center',
-    margin: 50,
-    color: '#fff',
-  },
-  inputField: {
-    marginVertical: 4,
-    height: 50,
-    borderWidth: 1,
-    borderColor: '#2b825b',
-    borderRadius: 4,
-    padding: 10,
-    color: '#fff',
-    backgroundColor: '#363636',
-  },
-  button: {
-    marginVertical: 15,
-    alignItems: 'center',
-    backgroundColor: '#2b825b',
-    padding: 12,
-    borderRadius: 4,
-  },
-});
 
 export default Login;
