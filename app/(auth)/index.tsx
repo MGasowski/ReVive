@@ -1,61 +1,38 @@
-import { Alert, View, Button, TextInput, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { useAuthActions } from '@convex-dev/auth/dist/react';
 import React, { useState } from 'react';
-import { supabase } from 'utils/supabase';
+import { Button, StyleSheet, TextInput, View } from 'react-native';
 
 const Login = () => {
+  const { signIn } = useAuthActions();
+  const [step, setStep] = useState<'signUp' | 'signIn'>('signIn');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-
-  // Sign in with email and password
-  const onSignInPress = async () => {
-    setLoading(true);
-
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) Alert.alert(error.message);
-    setLoading(false);
-  };
-
-  // Create a new user
-  const onSignUpPress = async () => {
-    setLoading(true);
-    const { error, data } = await supabase.auth.signUp({
-      email: email,
-      password: password,
-    });
-    console.log(data);
-
-    if (error) Alert.alert(error.message);
-    setLoading(false);
-  };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>My Cloud</Text>
-
+    <View>
       <TextInput
-        autoCapitalize="none"
-        placeholder="john@doe.com"
-        value={email}
+        placeholder="Email"
         onChangeText={setEmail}
-        style={styles.inputField}
+        value={email}
+        inputMode="email"
+        autoCapitalize="none"
       />
       <TextInput
-        placeholder="password"
-        value={password}
+        placeholder="Password"
         onChangeText={setPassword}
+        value={password}
         secureTextEntry
-        style={styles.inputField}
       />
-
-      <TouchableOpacity onPress={onSignInPress} style={styles.button}>
-        <Text style={{ color: '#fff' }}>Sign in</Text>
-      </TouchableOpacity>
-      <Button onPress={onSignUpPress} title="Create Account" color={'#fff'}></Button>
+      <Button
+        title={step === 'signIn' ? 'Sign in' : 'Sign up'}
+        onPress={() => {
+          signIn('password', { email, password, flow: step });
+        }}
+      />
+      <Button
+        title={step === 'signIn' ? 'Sign up instead' : 'Sign in instead'}
+        onPress={() => setStep(step === 'signIn' ? 'signUp' : 'signIn')}
+      />
     </View>
   );
 };

@@ -1,16 +1,19 @@
-import { View, Text } from 'react-native';
-import React from 'react';
+import { Authenticated, Unauthenticated } from 'convex/react';
 import { Redirect, Stack } from 'expo-router';
-import { authStore } from '~/store/auth';
-import { useAtom } from 'jotai';
+import React from 'react';
 
 const AuthLayout = () => {
-  const [session] = useAtom(authStore);
-  if (session) return <Redirect href="/(drawer)" />;
   return (
-    <Stack>
-      <Stack.Screen name="index" />
-    </Stack>
+    <>
+      <Unauthenticated>
+        <Stack>
+          <Stack.Screen name="index" />
+        </Stack>
+      </Unauthenticated>
+      <Authenticated>
+        <Redirect href="/(drawer)" />
+      </Authenticated>
+    </>
   );
 };
 
