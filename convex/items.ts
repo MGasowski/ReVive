@@ -10,6 +10,7 @@ export const sendImage = mutation({
     storageId: v.id('_storage'),
     name: v.string(),
     description: v.string(),
+    reservable: v.boolean(),
     location: v.object({
       lat: v.number(),
       lng: v.number(),
@@ -21,6 +22,8 @@ export const sendImage = mutation({
     console.log({ author });
     await ctx.db.insert('items', {
       body: args.storageId,
+      reservable: args.reservable,
+      status: 'available',
       name: args.name,
       author: author?.subject ?? 'Anonymous',
       description: args.description,
@@ -52,7 +55,11 @@ export const getItem = query({
 export const list = query({
   args: {},
   handler: async (ctx) => {
-    const messages = await ctx.db.query('items').collect();
+    const author = await ctx.auth.getUserIdentity();
+    const messages = await ctx.db
+      .query('items')
+      .filter((q) => q.neq(q.field('author'), author?.subject))
+      .collect();
     return Promise.all(
       messages.map(async (message) => ({
         ...message,

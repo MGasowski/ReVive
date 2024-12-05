@@ -6,6 +6,7 @@ import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Button, Text, TextInput, View } from 'react-native';
 import MapThumbnail from '~/components/MapThumbnail';
+import SegmentedControl from '@react-native-segmented-control/segmented-control';
 
 import Parallax from '~/components/Parallax';
 import { api } from '~/convex/_generated/api';
@@ -16,6 +17,7 @@ export default function AddItemScreen() {
   const [image, setImage] = useState<ImagePickerAsset | null>(null);
   const generateUploadUrl = useMutation(api.items.generateUploadUrl);
   const sendImage = useMutation(api.items.sendImage);
+  const [reservable, setReservable] = useState(false);
 
   const [location, setLocation] = useState<Location.LocationObject | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -82,14 +84,22 @@ export default function AddItemScreen() {
       storageId,
       name,
       description,
+      reservable,
       location: { lat: location?.coords.latitude!, lng: location?.coords.longitude! },
     });
     router.replace('/');
   };
 
+  const handleBack = () => {
+    setImage(null);
+    setName('');
+    setDescription('');
+
+    router.back();
+  };
   return (
     <View className="flex-1">
-      <Parallax imageUrl={image?.uri} onBack={() => router.back()} onImagePress={pickImage}>
+      <Parallax imageUrl={image?.uri} onBack={handleBack} onImagePress={pickImage}>
         <View className="mb-4">
           <TextInput
             className="rounded-md p-2 text-3xl"
@@ -109,6 +119,14 @@ export default function AddItemScreen() {
           />
         </View>
 
+        <Text>Can be reserved?</Text>
+        <SegmentedControl
+          values={['Allow Reservations', 'First Come, First Served']}
+          selectedIndex={reservable ? 1 : 0}
+          onChange={(event) => {
+            setReservable(!!event.nativeEvent.selectedSegmentIndex);
+          }}
+        />
         <MapThumbnail lat={location?.coords.latitude!} lng={location?.coords.longitude!} />
 
         <Button title="Submit" onPress={handleSubmit} disabled={!name || !description} />

@@ -10,6 +10,9 @@ const schema = defineSchema({
     description: v.optional(v.string()),
     body: v.id('_storage'),
     format: v.string(),
+    reservable: v.boolean(),
+    reservedBy: v.optional(v.string()),
+    status: v.union(v.literal('available'), v.literal('reserved'), v.literal('unavailable')),
     location: v.optional(
       v.object({
         lat: v.number(),
@@ -17,6 +20,14 @@ const schema = defineSchema({
       })
     ),
   }),
+  comments: defineTable({
+    text: v.string(),
+    itemId: v.id('items'),
+    userId: v.id('users'),
+    createdAt: v.number(),
+  })
+    .index('by_item', ['itemId'])
+    .index('by_user', ['userId']),
 });
 
 export default schema;

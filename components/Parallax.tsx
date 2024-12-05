@@ -1,13 +1,11 @@
 import { MaterialIcons } from '@expo/vector-icons';
-import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, {
   interpolate,
   useAnimatedRef,
   useAnimatedStyle,
   useScrollViewOffset,
 } from 'react-native-reanimated';
-
-import DropdownMenu from './DropdownMenu';
 
 const { width } = Dimensions.get('window');
 const IMG_HEIGHT = 300;
@@ -17,11 +15,13 @@ const Page = ({
   onBack,
   onImagePress,
   children,
+  Footer,
 }: {
   imageUrl?: string;
   onBack?: () => void;
   onImagePress?: (useCamera: boolean) => Promise<void>;
   children: React.ReactNode;
+  Footer?: React.ReactNode;
 }) => {
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useScrollViewOffset(scrollRef);
@@ -64,11 +64,24 @@ const Page = ({
           />
         ) : (
           <Animated.View style={[styles.placeholder, imageAnimatedStyle]}>
-            <DropdownMenu items={[]} onSelect={onImagePress} />
+            <TouchableOpacity
+              onPress={() => {
+                //ask if open camera or library
+                Alert.alert('Open Camera or Library?', 'Choose an option', [
+                  { text: 'Take a Photo', onPress: () => onImagePress?.(true) },
+                  { text: 'Choose from Library', onPress: () => onImagePress?.(false) },
+                  { text: 'Cancel', style: 'cancel' },
+                ]);
+              }}>
+              <MaterialIcons name="camera-alt" size={50} color="gray" />
+            </TouchableOpacity>
           </Animated.View>
         )}
 
-        <View style={{ height: 2000, backgroundColor: '#fff' }}>{children}</View>
+        <View style={{ flex: 1, backgroundColor: '#fff' }}>
+          {children}
+          {Footer && <View className="flex-1">{Footer}</View>}
+        </View>
       </Animated.ScrollView>
     </View>
   );

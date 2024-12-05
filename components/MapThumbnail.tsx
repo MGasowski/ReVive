@@ -1,11 +1,22 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleProp, StyleSheet, ViewStyle } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 
-const MapThumbnail = ({ lat, lng }: { lat: number; lng: number }) => {
+const MapThumbnail = ({
+  lat,
+  lng,
+  className,
+  style,
+}: {
+  lat: number;
+  lng: number;
+  className?: string;
+  style?: StyleProp<ViewStyle>;
+}) => {
   return (
     <MapView
-      style={styles.mapThumbnail}
+      className={className}
+      style={[styles.mapThumbnail, style]}
       region={{
         latitude: lat,
         longitude: lng,
