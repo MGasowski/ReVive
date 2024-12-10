@@ -25,17 +25,22 @@ export default function Comments({ itemId }: { itemId: Id<'items'> }) {
           <View style={styles.commentContainer}>
             <Text style={styles.userName}>{item.user?.name}</Text>
             <Text style={styles.commentText}>{item.text}</Text>
-            <Text style={styles.timestamp}>{new Date(item.createdAt).toLocaleDateString()}</Text>
+            <Text style={styles.timestamp}>{new Date(item.createdAt).toLocaleString()}</Text>
           </View>
         )}
       />
       <View style={styles.inputContainer}>
         <TextInput
+          returnKeyLabel="done"
+          enterKeyHint="done"
+          inputMode="text"
           style={styles.input}
           value={newComment}
+          enablesReturnKeyAutomatically
           onChangeText={setNewComment}
+          onSubmitEditing={handleSubmit}
           placeholder="Add a comment..."
-          multiline
+          //   multilinerrr
         />
         <TouchableOpacity style={styles.button} onPress={handleSubmit}>
           <Text style={styles.buttonText}>Send</Text>

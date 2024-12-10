@@ -5,13 +5,13 @@ import { v } from 'convex/values';
 const schema = defineSchema({
   ...authTables,
   items: defineTable({
-    author: v.string(),
+    author: v.id('users'),
     name: v.string(),
     description: v.optional(v.string()),
     body: v.id('_storage'),
     format: v.string(),
     reservable: v.boolean(),
-    reservedBy: v.optional(v.string()),
+    reservedBy: v.optional(v.id('users')),
     status: v.union(v.literal('available'), v.literal('reserved'), v.literal('unavailable')),
     location: v.optional(
       v.object({

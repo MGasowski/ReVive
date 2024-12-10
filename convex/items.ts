@@ -1,5 +1,6 @@
 import { v } from 'convex/values';
 import { mutation, query } from './_generated/server';
+import { getAuthUserId } from '@convex-dev/auth/server';
 
 export const generateUploadUrl = mutation(async (ctx) => {
   return await ctx.storage.generateUploadUrl();
@@ -18,14 +19,13 @@ export const sendImage = mutation({
   },
 
   handler: async (ctx, args) => {
-    const author = await ctx.auth.getUserIdentity();
-    console.log({ author });
+    const author = await getAuthUserId(ctx);
     await ctx.db.insert('items', {
       body: args.storageId,
       reservable: args.reservable,
       status: 'available',
       name: args.name,
-      author: author?.subject ?? 'Anonymous',
+      author: author!,
       description: args.description,
       location: args.location,
       format: 'image',
@@ -55,10 +55,10 @@ export const getItem = query({
 export const list = query({
   args: {},
   handler: async (ctx) => {
-    const author = await ctx.auth.getUserIdentity();
+    const author = await getAuthUserId(ctx);
     const messages = await ctx.db
       .query('items')
-      .filter((q) => q.neq(q.field('author'), author?.subject))
+      // .filter((q) => q.neq(q.field('author'), author))
       .collect();
     return Promise.all(
       messages.map(async (message) => ({
@@ -73,10 +73,10 @@ export const list = query({
 export const myList = query({
   args: {},
   handler: async (ctx) => {
-    const author = await ctx.auth.getUserIdentity();
+    const author = await getAuthUserId(ctx);
     const messages = await ctx.db
       .query('items')
-      .filter((q) => q.eq(q.field('author'), author?.subject))
+      .filter((q) => q.eq(q.field('author'), author))
       .collect();
     return Promise.all(
       messages.map(async (message) => ({
@@ -85,5 +85,13 @@ export const myList = query({
         ...(message.format === 'image' ? { url: await ctx.storage.getUrl(message.body) } : {}),
       }))
     );
+  },
+});
+
+export const reserve = mutation({
+  args: { id: v.id('items') },
+  handler: async (ctx, args) => {
+    const author = await getAuthUserId(ctx);
+    await ctx.db.patch(args.id, { status: 'reserved', reservedBy: author! });
   },
 });

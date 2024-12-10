@@ -1,112 +1,69 @@
-import { MaterialIcons } from '@expo/vector-icons';
-import { Alert, Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import Animated, {
-  interpolate,
-  useAnimatedRef,
-  useAnimatedStyle,
-  useScrollViewOffset,
-} from 'react-native-reanimated';
+import React from 'react';
+import {
+  ScrollView,
+  Animated,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  ViewStyle,
+  ScrollViewProps,
+  Keyboard,
+  KeyboardEvent,
+} from 'react-native';
 
-const { width } = Dimensions.get('window');
-const IMG_HEIGHT = 300;
-
-const Page = ({
-  imageUrl,
-  onBack,
-  onImagePress,
-  children,
-  Footer,
-}: {
-  imageUrl?: string;
-  onBack?: () => void;
-  onImagePress?: (useCamera: boolean) => Promise<void>;
+interface ParallaxProps extends ScrollViewProps {
+  headerHeight: number;
   children: React.ReactNode;
-  Footer?: React.ReactNode;
-}) => {
-  const scrollRef = useAnimatedRef<Animated.ScrollView>();
-  const scrollOffset = useScrollViewOffset(scrollRef);
+  renderHeader: () => React.ReactNode;
+  scrollViewStyle?: ViewStyle;
+  contentContainerStyle?: ViewStyle;
+}
 
-  const imageAnimatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          translateY: interpolate(
-            scrollOffset.value,
-            [-IMG_HEIGHT, 0, IMG_HEIGHT],
-            [-IMG_HEIGHT / 2, 0, IMG_HEIGHT * 0.75]
-          ),
-        },
-        {
-          scale: interpolate(scrollOffset.value, [-IMG_HEIGHT, 0, IMG_HEIGHT], [2, 1, 1]),
-        },
-      ],
+export const Parallax: React.FC<ParallaxProps> = ({
+  headerHeight,
+  children,
+  renderHeader,
+  scrollViewStyle,
+  contentContainerStyle,
+  ...scrollViewProps
+}) => {
+  const scrollY = new Animated.Value(0);
+  const scrollViewRef = React.useRef<ScrollView>(null);
+
+  React.useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', handleKeyboardShow);
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', handleKeyboardHide);
+
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
     };
-  });
+  }, []);
+
+  const handleKeyboardShow = (event: KeyboardEvent) => {
+    scrollViewRef.current?.scrollToEnd({ animated: true });
+  };
+
+  const handleKeyboardHide = () => {
+    // Optionally, you can scroll back to the top or do nothing
+  };
 
   return (
-    <View style={styles.container}>
-      <Animated.ScrollView ref={scrollRef} scrollEventThrottle={16}>
-        {onBack && (
-          <TouchableOpacity
-            className="absolute left-8 top-16 z-50 flex h-8 w-8 items-center justify-center rounded-full bg-white"
-            onPress={onBack}>
-            <Text>
-              <MaterialIcons name="chevron-left" size={24} color="black" />
-            </Text>
-          </TouchableOpacity>
-        )}
-        {imageUrl ? (
-          <Animated.Image
-            source={{
-              uri: imageUrl,
-            }}
-            style={[styles.image, imageAnimatedStyle]}
-          />
-        ) : (
-          <Animated.View style={[styles.placeholder, imageAnimatedStyle]}>
-            <TouchableOpacity
-              onPress={() => {
-                //ask if open camera or library
-                Alert.alert('Open Camera or Library?', 'Choose an option', [
-                  { text: 'Take a Photo', onPress: () => onImagePress?.(true) },
-                  { text: 'Choose from Library', onPress: () => onImagePress?.(false) },
-                  { text: 'Cancel', style: 'cancel' },
-                ]);
-              }}>
-              <MaterialIcons name="camera-alt" size={50} color="gray" />
-            </TouchableOpacity>
-          </Animated.View>
-        )}
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <Animated.View style={[{ height: headerHeight }]}>{renderHeader()}</Animated.View>
 
-        <View style={{ flex: 1, backgroundColor: '#fff' }}>
-          {children}
-          {Footer && <View className="flex-1">{Footer}</View>}
-        </View>
+      <Animated.ScrollView
+        keyboardShouldPersistTaps="handled"
+        ref={scrollViewRef}
+        style={[scrollViewStyle]}
+        contentContainerStyle={[{ paddingTop: headerHeight }, contentContainerStyle]}
+        onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
+          useNativeDriver: true,
+        })}
+        scrollEventThrottle={16}
+        {...scrollViewProps}>
+        {children}
       </Animated.ScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
-export default Page;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  image: {
-    width,
-    height: IMG_HEIGHT,
-  },
-  header: {
-    backgroundColor: '#fff',
-    height: 100,
-    borderWidth: StyleSheet.hairlineWidth,
-  },
-  placeholder: {
-    width,
-    height: IMG_HEIGHT,
-    backgroundColor: 'lightgray',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});

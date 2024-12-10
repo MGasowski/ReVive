@@ -35,8 +35,8 @@ const DrawerLayout = () => {
 
               header: () => (
                 <View className="px-6 " style={{ paddingTop: top }}>
-                  <Text className="text-accent text-lg">Good Morning</Text>
-                  <Text className="text-accent text-2xl font-semibold">{user?.name}</Text>
+                  <Text className="text-lg text-accent">Good Morning</Text>
+                  <Text className="text-2xl font-semibold text-accent">{user?.name}</Text>
                 </View>
               ),
             }}
@@ -57,6 +57,19 @@ const DrawerLayout = () => {
             }}
           />
           <Drawer.Screen
+            name="test"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Drawer.Screen
+            name="map"
+            options={{
+              headerTransparent: true,
+              headerTitle: '',
+            }}
+          />
+          <Drawer.Screen
             name="add-item"
             options={{
               headerShown: false,
@@ -65,6 +78,9 @@ const DrawerLayout = () => {
               drawerIcon: ({ size, color }) => (
                 <Ionicons name="add-circle-outline" size={size} color={color} />
               ),
+              sceneStyle: {
+                backgroundColor: '#9ca3af',
+              },
             }}
           />
           <Drawer.Screen name="[id]" options={{ headerShown: false }} />

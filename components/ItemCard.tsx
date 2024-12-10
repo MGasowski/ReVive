@@ -3,19 +3,24 @@ import React from 'react';
 import Animated from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import Text from './Text';
-import { router } from 'expo-router';
+import clsx from 'clsx';
 
-const ItemCard = ({ item }: { item: any }) => {
+const ItemCard = ({
+  item,
+  onPress,
+  className,
+}: {
+  item: any;
+  onPress: () => void;
+  className?: string;
+}) => {
   return (
-    <TouchableOpacity
-      onPress={() => {
-        router.push(`/(drawer)/${item._id}`);
-      }}>
-      <View className="mb-6 h-[100px] rounded-lg bg-white p-2 shadow-sm">
+    <TouchableOpacity onPress={onPress}>
+      <View className={clsx(' h-[100px] rounded-lg bg-white p-2 ', className)}>
         <View className="flex-1 flex-row gap-4">
           <Animated.Image className="h-full w-[100px] rounded-lg" source={{ uri: item.url }} />
           <View className="flex-1 justify-between">
-            <View>
+            <View className="flex-1">
               <Text className="text-lg font-semibold text-accent">{item.name}</Text>
               <Text>{item.description}</Text>
             </View>

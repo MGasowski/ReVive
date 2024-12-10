@@ -1,14 +1,21 @@
-import { View, Text } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 
 const FloatingMapButton = () => {
   return (
-    <View className="absolute bottom-8 right-8">
-      <View className="bg-accent rounded-full p-4">
-        <Ionicons name="map-outline" size={24} color="white" />
+    <TouchableOpacity
+      onPress={() => {
+        router.push('/map');
+      }}
+      className="z-100 absolute bottom-8 right-8">
+      <View>
+        <View className="rounded-full bg-accent p-4">
+          <Ionicons name="map-outline" size={24} color="white" />
+        </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

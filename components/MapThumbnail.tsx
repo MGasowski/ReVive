@@ -38,7 +38,7 @@ const MapThumbnail = ({
 const styles = StyleSheet.create({
   mapThumbnail: {
     width: 'auto', // Adjust width as needed
-    height: 150, // Thumbnail height
+    height: 70, // Thumbnail height
     borderRadius: 10,
     overflow: 'hidden',
   },

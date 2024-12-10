@@ -1,9 +1,7 @@
 import { useQuery } from 'convex/react';
 import { router } from 'expo-router';
-import { FlatList, TouchableOpacity, View } from 'react-native';
+import { FlatList, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import Animated from 'react-native-reanimated';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import FloatingMapButton from '~/components/FloatingMapButton';
 import ItemCard from '~/components/ItemCard';
 import MyItemCard from '~/components/MyItemCard';
@@ -20,7 +18,7 @@ export default function Home() {
       <FloatingMapButton />
       <ScrollView className="flex-1 ">
         <View className="mb-4 mt-8 px-6">
-          <Text className="text-accent text-lg font-medium">My Items</Text>
+          <Text className="text-lg font-medium text-accent">My Items</Text>
         </View>
         <View className="mb-8 w-full">
           <FlatList
@@ -35,11 +33,13 @@ export default function Home() {
           />
         </View>
         <View className="flex-1 px-6">
-          <Text className="text-accent text-lg font-medium">Newest Nearby Items</Text>
+          <Text className="text-lg font-medium text-accent">Newest Nearby Items</Text>
           <FlatList
             className="flex-1"
             data={messages}
-            renderItem={({ item }) => <ItemCard item={item} />}
+            renderItem={({ item }) => (
+              <ItemCard item={item} onPress={() => router.push(`/(drawer)/${item._id}`)} />
+            )}
             keyExtractor={(item) => item._id}
           />
         </View>

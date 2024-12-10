@@ -35,7 +35,7 @@ export const list = query({
     const comments = await ctx.db
       .query('comments')
       .withIndex('by_item', (q) => q.eq('itemId', args.itemId))
-      .order('desc')
+      .order('asc')
       .collect();
 
     // Fetch user information for each comment
