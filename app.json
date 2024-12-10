@@ -1,9 +1,9 @@
 {
   "expo": {
-    "name": "ReVive",
-    "slug": "ReVive",
+    "name": "ReuseHub",
+    "slug": "ReuseHub",
     "version": "1.0.0",
-    "scheme": "ReVive",
+    "scheme": "ReuseHub",
     "web": {
       "bundler": "metro",
       "output": "static",
@@ -41,14 +41,14 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.mgasowski.ReVive"
+      "bundleIdentifier": "com.mgasowski.reusehub"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.mgasowski.ReVive"
+      "package": "pl.digitalgoose.reusehub"
     },
     "extra": {
       "router": {

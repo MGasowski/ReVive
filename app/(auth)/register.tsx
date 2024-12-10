@@ -18,7 +18,7 @@ const Login = () => {
   return (
     <View className="flex-1 items-center bg-[#70B9BE]" style={{ paddingTop: top }}>
       <View className="w-full items-end pr-4"></View>
-      <Text className="h-auto pt-4 font-Poppins text-5xl font-bold text-white">ReVive</Text>
+      <Text className="h-auto pt-4 font-Poppins text-5xl font-bold text-white">ReuseHub</Text>
       <Text className="text-lg text-white">Give your items a second life!</Text>
       <Animated.View
         entering={SlideInDown}

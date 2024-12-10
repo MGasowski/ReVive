@@ -26,7 +26,7 @@ const Login = () => {
           </View>
         </TouchableOpacity>
       </View>
-      <Text className="h-auto pt-4 font-Poppins text-5xl font-bold text-white">ReVive</Text>
+      <Text className="h-auto pt-4 font-Poppins text-5xl font-bold text-white">ReuseHub</Text>
       <Text className="text-lg text-white">Give your items a second life!</Text>
       <Animated.View
         entering={SlideInDown}
