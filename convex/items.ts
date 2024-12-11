@@ -53,15 +53,20 @@ export const getItem = query({
 });
 
 export const list = query({
-  args: {},
-  handler: async (ctx) => {
+  args: {
+    search: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
     const author = await getAuthUserId(ctx);
-    const messages = await ctx.db
+    const messages = await ctx.db.query('items').collect();
+
+    const filteredMessages = await ctx.db
       .query('items')
-      // .filter((q) => q.neq(q.field('author'), author))
+      .withSearchIndex('search_name', (q) => q.search('name', args.search!))
       .collect();
+
     return Promise.all(
-      messages.map(async (message) => ({
+      (args.search ? filteredMessages : messages).map(async (message) => ({
         ...message,
         // If the message is an "image" its `body` is an `Id<"_storage">`
         ...(message.format === 'image' ? { url: await ctx.storage.getUrl(message.body) } : {}),
@@ -71,15 +76,24 @@ export const list = query({
 });
 
 export const myList = query({
-  args: {},
-  handler: async (ctx) => {
+  args: {
+    search: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
     const author = await getAuthUserId(ctx);
     const messages = await ctx.db
       .query('items')
       .filter((q) => q.eq(q.field('author'), author))
       .collect();
+
+    const filteredMessages = await ctx.db
+      .query('items')
+      .withSearchIndex('search_name', (q) => q.search('name', args.search!))
+      .filter((q) => q.eq(q.field('author'), author))
+      .collect();
+
     return Promise.all(
-      messages.map(async (message) => ({
+      (args.search ? filteredMessages : messages).map(async (message) => ({
         ...message,
         // If the message is an "image" its `body` is an `Id<"_storage">`
         ...(message.format === 'image' ? { url: await ctx.storage.getUrl(message.body) } : {}),

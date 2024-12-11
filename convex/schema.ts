@@ -19,6 +19,9 @@ const schema = defineSchema({
         lng: v.number(),
       })
     ),
+  }).searchIndex('search_name', {
+    searchField: 'name',
+    filterFields: ['name'],
   }),
   comments: defineTable({
     text: v.string(),
