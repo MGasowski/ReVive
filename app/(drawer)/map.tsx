@@ -8,7 +8,9 @@ import { Doc } from '~/convex/_generated/dataModel';
 import useGetCurrentLocation from '~/hooks/useGetCurrentLocation';
 
 export default function MapScreen() {
-  const items = useQuery(api.items.list);
+  const items = useQuery(api.items.list, {
+    search: '',
+  });
   const [selectedItem, setSelectedItem] = useState<Doc<'items'> | null>(null);
   const { location } = useGetCurrentLocation();
   const [initialRegion, setInitialRegion] = useState<Region | null>(null);

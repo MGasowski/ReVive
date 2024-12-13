@@ -109,3 +109,31 @@ export const reserve = mutation({
     await ctx.db.patch(args.id, { status: 'reserved', reservedBy: author! });
   },
 });
+
+export const cancelReservation = mutation({
+  args: { id: v.id('items') },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.id, { status: 'available', reservedBy: undefined });
+  },
+});
+
+export const makeUnavailable = mutation({
+  args: { id: v.id('items') },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.id, { status: 'unavailable' });
+  },
+});
+
+export const makeAvailable = mutation({
+  args: { id: v.id('items') },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.id, { status: 'available' });
+  },
+});
+
+export const deleteItem = mutation({
+  args: { id: v.id('items') },
+  handler: async (ctx, args) => {
+    await ctx.db.delete(args.id);
+  },
+});

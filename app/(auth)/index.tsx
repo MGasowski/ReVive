@@ -1,6 +1,7 @@
 import { useAuthActions } from '@convex-dev/auth/dist/react';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import { useAtom } from 'jotai';
 import React, { useState } from 'react';
 import { KeyboardAvoidingView, TouchableOpacity, View } from 'react-native';
 import Animated, { SlideInDown } from 'react-native-reanimated';
@@ -9,6 +10,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button } from '~/components/Button';
 import Text from '~/components/Text';
 import TextInput from '~/components/TextInput';
+import { authStore } from '~/store/auth';
 
 const Login = () => {
   const { signIn } = useAuthActions();
@@ -16,6 +18,7 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { top } = useSafeAreaInsets();
+  const [user, setUser] = useAtom(authStore);
 
   return (
     <View className="flex-1 items-center bg-[#70B9BE]" style={{ paddingTop: top }}>
@@ -64,7 +67,9 @@ const Login = () => {
               className="w-full"
               title={step === 'signIn' ? 'Sign in' : 'Sign up'}
               onPress={() => {
-                signIn('password', { email, password, flow: step });
+                signIn('password', { email, password, flow: step }).then(() => {
+                  setUser(email);
+                });
               }}
             />
           </View>

@@ -1,11 +1,12 @@
 import { MaterialIcons } from '@expo/vector-icons';
-import { useMutation, useQuery } from 'convex/react';
-import { useLocalSearchParams } from 'expo-router';
-import React, { useEffect, useRef, useState } from 'react';
-import { Image, Keyboard, KeyboardAvoidingView, View, TouchableOpacity } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import { useMutation, useQuery } from 'convex/react';
+import { router, useLocalSearchParams } from 'expo-router';
+import React, { useEffect, useRef, useState } from 'react';
+import { Image, Keyboard, KeyboardAvoidingView, TouchableOpacity, View } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Comments from '../../components/Comments';
 
@@ -21,9 +22,17 @@ import { useAddressFromLocation } from '~/hooks/useAddressFromLocation';
 
 const ItemDetails = () => {
   const { id } = useLocalSearchParams<{ id: Id<'items'> }>();
+
   const item = useQuery(api.items.getItem, { id });
   const author = useQuery(api.user.getUser, { id: item?.author! });
   const reserve = useMutation(api.items.reserve);
+  const deleteItem = useMutation(api.items.deleteItem);
+  const currentUser = useQuery(api.user.currentUser);
+  const makeUnavailable = useMutation(api.items.makeUnavailable);
+  const makeAvailable = useMutation(api.items.makeAvailable);
+  const cancelReservation = useMutation(api.items.cancelReservation);
+
+  const [isOpen, setIsOpen] = useState(false);
   const { bottom } = useSafeAreaInsets();
   const address = useAddressFromLocation({
     lat: item?.location?.lat ?? 0,
@@ -47,7 +56,6 @@ const ItemDetails = () => {
       keyboardDidShowListener.remove();
     };
   }, []);
-
   return (
     <KeyboardAvoidingView behavior="padding">
       <ScrollView contentContainerStyle={{ paddingBottom: bottom }}>
@@ -69,11 +77,15 @@ const ItemDetails = () => {
             </TouchableOpacity>
             <View className="z-100 absolute bottom-0 -mb-4 w-full flex-row justify-end gap-4  pr-4">
               <View className="">
-                {!item?.reservable && item?.status === 'available' && (
-                  <Button title="Want it!" onPress={() => reserve({ id: item._id! })} />
-                )}
+                {!item?.reservable &&
+                  item?.status === 'available' &&
+                  currentUser?._id !== item?.author && (
+                    <Button title="Want it!" onPress={() => reserve({ id: item._id! })} />
+                  )}
               </View>
               <Status status={item?.status ?? 'available'} />
+
+              <Button onPress={() => setIsOpen((prev) => !prev)} title="Options" />
             </View>
           </View>
         </View>
@@ -106,6 +118,41 @@ const ItemDetails = () => {
           <Separator />
           <Comments itemId={id} />
         </View>
+        {isOpen && (
+          <Animated.View
+            className="z-1000 absolute right-4 top-96  items-center justify-center gap-2 "
+            entering={FadeIn}
+            exiting={FadeOut}>
+            <View className="w-full">
+              <Button
+                title="Delete"
+                onPress={() => deleteItem({ id: item?._id! })}
+                className="shadow-black"
+              />
+            </View>
+            <View className="w-full">
+              <Button
+                title="Make unavailable"
+                onPress={() => makeUnavailable({ id: item?._id! })}
+                className="shadow-black"
+              />
+            </View>
+            <View className="w-full">
+              <Button
+                title="Make available"
+                onPress={() => makeAvailable({ id: item?._id! })}
+                className="shadow-black"
+              />
+            </View>
+            <View className="w-full">
+              <Button
+                title="Cancel reservation"
+                onPress={() => cancelReservation({ id: item?._id! }).then(() => router.back())}
+                className="shadow-black"
+              />
+            </View>
+          </Animated.View>
+        )}
       </ScrollView>
     </KeyboardAvoidingView>
   );
