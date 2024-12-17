@@ -3,10 +3,10 @@ import SegmentedControl from '@react-native-segmented-control/segmented-control'
 import clsx from 'clsx';
 import { useMutation } from 'convex/react';
 import * as ImagePicker from 'expo-image-picker';
-import { ImagePickerAsset } from 'expo-image-picker';
 import * as Location from 'expo-location';
 import { router } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useAtom, useSetAtom } from 'jotai';
+import { useEffect } from 'react';
 import {
   Alert,
   Image,
@@ -17,34 +17,31 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+
 import { Button } from '~/components/Button';
 import Separator from '~/components/Separator';
-
 import { api } from '~/convex/_generated/api';
+import {
+  addressAtom,
+  clearStoreAtom,
+  descriptionAtom,
+  imageAtom,
+  locationAtom,
+  nameAtom,
+  reservableAtom,
+} from '~/store/add-item';
 
 export default function AddItemScreen() {
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [image, setImage] = useState<ImagePickerAsset | null>(null);
+  const [name, setName] = useAtom(nameAtom);
+  const [description, setDescription] = useAtom(descriptionAtom);
+  const [image, setImage] = useAtom(imageAtom);
+  const [reservable, setReservable] = useAtom(reservableAtom);
+  const [location] = useAtom(locationAtom);
+  const [address] = useAtom(addressAtom);
+  const clearStore = useSetAtom(clearStoreAtom); // Clear handler
+
   const generateUploadUrl = useMutation(api.items.generateUploadUrl);
   const sendImage = useMutation(api.items.sendImage);
-  const [reservable, setReservable] = useState(false);
-
-  const [location, setLocation] = useState<Location.LocationObject | null>(null);
-
-  useEffect(() => {
-    async function getCurrentLocation() {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        return;
-      }
-
-      const location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-    }
-
-    getCurrentLocation();
-  }, []);
 
   const pickImage = async (useCamera: boolean) => {
     // Request permission
@@ -96,6 +93,7 @@ export default function AddItemScreen() {
       reservable,
       location: { lat: location?.coords.latitude!, lng: location?.coords.longitude! },
     });
+    clearStore();
     router.replace('/');
   };
 
@@ -105,9 +103,10 @@ export default function AddItemScreen() {
       {
         text: 'Go Back',
         onPress: () => {
-          setImage(null);
-          setName('');
-          setDescription('');
+          // setImage(null);
+          // setName('');
+          // setDescription('');
+          clearStore();
           router.back();
         },
       },
@@ -173,11 +172,15 @@ export default function AddItemScreen() {
 
         <View className="flex-1 gap-4">
           <Text className="text-lg  text-gray-500">Location</Text>
-          <Button
-            title="Set Location"
-            className="bg-primary"
-            onPress={() => router.push('/(drawer)/add-item/address-picker')}
-          />
+
+          <View className="flex-row items-center justify-between gap-4">
+            {address && <Text className="text-gray-500">{address}</Text>}
+            <Button
+              title={address ? 'Change Address' : 'Pick Address'}
+              className="bg-primary"
+              onPress={() => router.push('/(drawer)/add-item/address-picker')}
+            />
+          </View>
           <Separator />
           <Button
             title="Submit"

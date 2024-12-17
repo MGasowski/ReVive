@@ -110,6 +110,7 @@ const ItemDetails = () => {
                 <Text className="pt-2 text-gray-700">{address}</Text>
               </View>
             </View>
+
             <View className="flex-1">
               <MapThumbnail lat={item?.location?.lat ?? 0} lng={item?.location?.lng ?? 0} />
             </View>
@@ -126,7 +127,10 @@ const ItemDetails = () => {
             <View className="w-full">
               <Button
                 title="Delete"
-                onPress={() => deleteItem({ id: item?._id! })}
+                onPress={() => {
+                  deleteItem({ id: item?._id! });
+                  router.back();
+                }}
                 className="shadow-black"
               />
             </View>

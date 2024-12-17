@@ -22,6 +22,7 @@ export const sendImage = mutation({
     const author = await getAuthUserId(ctx);
     await ctx.db.insert('items', {
       body: args.storageId,
+      deleted: false,
       reservable: args.reservable,
       status: 'available',
       name: args.name,
@@ -58,26 +59,30 @@ export const list = query({
   },
   handler: async (ctx, args) => {
     // Step 1: Get all items or filtered items based on search query
-    const messages = await ctx.db.query('items').collect();
+    const items = await ctx.db
+      .query('items')
+      .filter((q) => q.eq(q.field('deleted'), false))
+      .collect();
 
-    const filteredMessages = await ctx.db
+    const filteredItems = await ctx.db
       .query('items')
       .withSearchIndex('search_name', (q) => q.search('name', args.search!))
+      .filter((q) => q.neq(q.field('deleted'), true))
       .collect();
 
     const result = await Promise.all(
-      (args.search ? filteredMessages : messages).map(async (message) => {
+      (args.search ? filteredItems : items).map(async (item) => {
         // Step 2: Fetch the author object using the ID in the message
         let authorData = null;
 
-        if (message.author) {
-          authorData = await ctx.db.get(message.author); // Fetch the author by ID
+        if (item.author) {
+          authorData = await ctx.db.get(item.author); // Fetch the author by ID
         }
 
         // Step 3: Handle "image" format URLs and include the author data
         return {
-          ...message,
-          ...(message.format === 'image' ? { url: await ctx.storage.getUrl(message.body) } : {}),
+          ...item,
+          ...(item.format === 'image' ? { url: await ctx.storage.getUrl(item.body) } : {}),
           author: authorData, // Attach the author object to the message
         };
       })
@@ -146,6 +151,6 @@ export const makeAvailable = mutation({
 export const deleteItem = mutation({
   args: { id: v.id('items') },
   handler: async (ctx, args) => {
-    await ctx.db.delete(args.id);
+    await ctx.db.patch(args.id, { deleted: true });
   },
 });

@@ -1,14 +1,21 @@
-import { View, Text, FlatList } from 'react-native';
+import { router } from 'expo-router';
+import { useAtom } from 'jotai';
 import React, { useEffect, useRef, useState } from 'react';
-import MapView, { Region } from 'react-native-maps';
+import { Text, View } from 'react-native';
+import MapView, { Marker, Region } from 'react-native-maps';
+import { Button } from '~/components/Button';
 import useGetCurrentLocation from '~/hooks/useGetCurrentLocation';
+import { addressAtom, locationAtom } from '~/store/add-item';
+import { getAddressFromLocation } from '~/utils/address';
 
 const AddressPicker = () => {
-  const currentLocation = useGetCurrentLocation();
   const { location } = useGetCurrentLocation();
   const [initialRegion, setInitialRegion] = useState<Region | null>(null);
-  const flatListRef = useRef<FlatList>(null);
+  const [selectedRegion, setSelectedRegion] = useState<Region | null>(null);
+  const [address, setAddress] = useState<string | null>(null);
+  const [, setAtomAddress] = useAtom(addressAtom);
   const mapRef = useRef<MapView>(null);
+  const [, setLocation] = useAtom(locationAtom);
   useEffect(() => {
     if (location) {
       setInitialRegion({
@@ -19,26 +26,61 @@ const AddressPicker = () => {
       });
     }
   }, [location]);
+
   return (
     <>
       <View className="flex-1">
         <MapView
           ref={mapRef}
+          zoomControlEnabled
           style={{ flex: 1 }}
           initialRegion={initialRegion ?? undefined}
-          moveOnMarkerPress
           showsUserLocation
-          showsCompass
-          showsScale
-          showsIndoors>
-          {/* {items?.map((item) => (
-          <Marker
-            key={item._id}
-            coordinate={{ latitude: item.location?.lat ?? 0, longitude: item.location?.lng ?? 0 }}
-            onPress={() => setSelectedItem(item)}
-          />
-        ))} */}
+          onRegionChange={setSelectedRegion}
+          onRegionChangeComplete={async (region) => {
+            const address = await getAddressFromLocation({
+              lat: region.latitude,
+              lng: region.longitude,
+            });
+            setAddress(address);
+          }}>
+          {selectedRegion && (
+            <Marker
+              coordinate={{
+                latitude: selectedRegion.latitude,
+                longitude: selectedRegion.longitude,
+              }}
+              title={address ?? ''}
+              draggable
+            />
+          )}
         </MapView>
+        {address && selectedRegion && (
+          <View className="absolute bottom-16 w-full p-4">
+            <View className="flex-1 flex-row items-center justify-between rounded-lg bg-white p-4 shadow">
+              {selectedRegion && <Text>{address}</Text>}
+              <Button
+                title="select"
+                onPress={() => {
+                  setLocation({
+                    coords: {
+                      latitude: selectedRegion.latitude,
+                      longitude: selectedRegion.longitude,
+                      accuracy: 0,
+                      altitude: 0,
+                      altitudeAccuracy: 0,
+                      heading: 0,
+                      speed: 0,
+                    },
+                    timestamp: 0,
+                  });
+                  setAtomAddress(address);
+                  router.back();
+                }}
+              />
+            </View>
+          </View>
+        )}
       </View>
     </>
   );

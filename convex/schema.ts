@@ -13,6 +13,7 @@ const schema = defineSchema({
     reservable: v.boolean(),
     reservedBy: v.optional(v.id('users')),
     status: v.union(v.literal('available'), v.literal('reserved'), v.literal('unavailable')),
+    deleted: v.boolean(),
     location: v.optional(
       v.object({
         lat: v.number(),

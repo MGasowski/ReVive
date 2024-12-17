@@ -16,13 +16,15 @@ const ItemCard = ({
 }) => {
   return (
     <TouchableOpacity onPress={onPress}>
-      <View className={clsx(' h-[100px] rounded-lg bg-white p-2 ', className)}>
+      <View className={clsx(' h-[100px] rounded-lg bg-white p-2', className)}>
         <View className="flex-1 flex-row gap-4">
           <Animated.Image className="h-full w-[100px] rounded-lg" source={{ uri: item.url }} />
           <View className="flex-1 justify-between">
-            <View className="flex-1">
+            <View className="w-2/3 flex-1">
               <Text className="text-lg font-semibold text-accent">{item.name}</Text>
-              <Text>{item.description}</Text>
+              <Text ellipsizeMode="tail" numberOfLines={2}>
+                {item.description}
+              </Text>
             </View>
             <Text className="text-gray-500">{item.author.name}</Text>
           </View>
