@@ -24,7 +24,7 @@ const ItemCard = ({
               <Text className="text-lg font-semibold text-accent">{item.name}</Text>
               <Text>{item.description}</Text>
             </View>
-            <Text className="text-gray-500">author</Text>
+            <Text className="text-gray-500">{item.author.name}</Text>
           </View>
           <View className="items-center justify-center  pr-4">
             <View className="rounded-xl bg-accent p-2">

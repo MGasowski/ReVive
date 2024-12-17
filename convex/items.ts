@@ -57,7 +57,7 @@ export const list = query({
     search: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const author = await getAuthUserId(ctx);
+    // Step 1: Get all items or filtered items based on search query
     const messages = await ctx.db.query('items').collect();
 
     const filteredMessages = await ctx.db
@@ -65,13 +65,25 @@ export const list = query({
       .withSearchIndex('search_name', (q) => q.search('name', args.search!))
       .collect();
 
-    return Promise.all(
-      (args.search ? filteredMessages : messages).map(async (message) => ({
-        ...message,
-        // If the message is an "image" its `body` is an `Id<"_storage">`
-        ...(message.format === 'image' ? { url: await ctx.storage.getUrl(message.body) } : {}),
-      }))
+    const result = await Promise.all(
+      (args.search ? filteredMessages : messages).map(async (message) => {
+        // Step 2: Fetch the author object using the ID in the message
+        let authorData = null;
+
+        if (message.author) {
+          authorData = await ctx.db.get(message.author); // Fetch the author by ID
+        }
+
+        // Step 3: Handle "image" format URLs and include the author data
+        return {
+          ...message,
+          ...(message.format === 'image' ? { url: await ctx.storage.getUrl(message.body) } : {}),
+          author: authorData, // Attach the author object to the message
+        };
+      })
     );
+
+    return result;
   },
 });
 
