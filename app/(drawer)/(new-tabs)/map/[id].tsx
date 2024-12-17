@@ -8,10 +8,9 @@ import { ScrollView } from 'react-native-gesture-handler';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import Comments from '../../components/Comments';
-
 import Avatar from '~/components/Avatar';
 import { Button } from '~/components/Button';
+import Comments from '~/components/Comments';
 import MapThumbnail from '~/components/MapThumbnail';
 import Separator from '~/components/Separator';
 import Status from '~/components/Status';

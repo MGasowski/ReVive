@@ -23,78 +23,9 @@ const DrawerLayout = () => {
       <Authenticated>
         <Drawer drawerContent={DrawerContent}>
           <Drawer.Screen
-            name="index"
-            options={{
-              headerTitle: 'Home',
-              drawerLabel: 'Home',
-              drawerIcon: ({ size, color }) => (
-                <Ionicons name="home-outline" size={size} color={color} />
-              ),
-
-              header: MainHeader,
-            }}
-          />
-          <Drawer.Screen
-            name="(tabs)"
-            options={{
-              headerTitle: 'Tabs',
-              drawerLabel: 'Tabs',
-              drawerIcon: ({ size, color }) => (
-                <MaterialIcons name="border-bottom" size={size} color={color} />
-              ),
-
-              drawerItemStyle: {
-                display: 'none',
-              },
-              headerRight: () => (
-                <Link href="/modal" asChild>
-                  <HeaderButton />
-                </Link>
-              ),
-            }}
-          />
-          <Drawer.Screen
-            name="test"
+            name="(new-tabs)"
             options={{
               headerShown: false,
-              drawerItemStyle: {
-                display: 'none',
-              },
-            }}
-          />
-          <Drawer.Screen
-            name="map"
-            options={{
-              headerTransparent: true,
-              headerTitle: '',
-              drawerLabel: 'Map',
-              drawerIcon: ({ size, color }) => (
-                <Ionicons name="map-outline" size={size} color={color} />
-              ),
-            }}
-          />
-          <Drawer.Screen
-            name="add-item"
-            options={{
-              headerShown: false,
-              headerTitle: 'Add Item',
-              drawerLabel: 'Add Item',
-              drawerIcon: ({ size, color }) => (
-                <Ionicons name="add-circle-outline" size={size} color={color} />
-              ),
-
-              sceneStyle: {
-                backgroundColor: '#9ca3af',
-              },
-            }}
-          />
-          <Drawer.Screen
-            name="[id]"
-            options={{
-              headerShown: false,
-              drawerItemStyle: {
-                display: 'none',
-              },
             }}
           />
         </Drawer>

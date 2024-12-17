@@ -1,7 +1,7 @@
 import '../global.css';
 
 import { loadAsync } from 'expo-font';
-import { Stack } from 'expo-router';
+import { Stack, useSegments } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -14,7 +14,8 @@ export const unstable_settings = {
 
 export default function RootLayout() {
   const [isAppReady, setIsAppReady] = useState(false);
-
+  const segmentClient = useSegments();
+  console.log(segmentClient);
   useEffect(() => {
     const loadFonts = async () => {
       try {

@@ -47,7 +47,7 @@ export default function Home() {
             renderItem={({ item }) => (
               <ItemCard
                 item={item}
-                onPress={() => router.push(`/(drawer)/${item._id}`)}
+                onPress={() => router.push(`/(drawer)/(new-tabs)/map/${item._id}`)}
                 className="mb-4"
               />
             )}

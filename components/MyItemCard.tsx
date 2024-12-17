@@ -7,7 +7,7 @@ const MyItemCard = ({ item }: { item: any }) => {
   return (
     <TouchableOpacity
       className="mr-8 h-[170px] w-[300px] shadow-md"
-      onPress={() => router.push(`/(drawer)/${item._id}`)}>
+      onPress={() => router.push(`/map/${item._id}`)}>
       <View className="absolute">
         <Animated.Image
           className="h-[170px] w-[300px] rounded-lg"

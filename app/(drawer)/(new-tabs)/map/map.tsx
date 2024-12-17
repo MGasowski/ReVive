@@ -98,7 +98,8 @@ export default function MapScreen() {
                     <Text className="text-gray-500">{item.author.name}</Text>
                   </View>
                   <View className="items-center justify-center  pr-4">
-                    <TouchableOpacity onPress={() => router.push(`/(drawer)/${item._id}`)}>
+                    <TouchableOpacity
+                      onPress={() => router.push(`/(drawer)/(new-tabs)/map/${item._id}`)}>
                       <View className="rounded-xl bg-accent p-2">
                         <Ionicons name="arrow-forward" size={20} color="white" />
                       </View>

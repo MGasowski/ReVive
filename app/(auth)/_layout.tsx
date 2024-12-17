@@ -12,7 +12,7 @@ const AuthLayout = () => {
         </Stack>
       </Unauthenticated>
       <Authenticated>
-        <Redirect href="/(drawer)" />
+        <Redirect href="/(drawer)/(new-tabs)/map" />
       </Authenticated>
     </>
   );
