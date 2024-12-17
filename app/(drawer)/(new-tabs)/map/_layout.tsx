@@ -33,42 +33,9 @@ const DrawerLayout = () => {
               header: MainHeader,
             }}
           />
-          <Drawer.Screen
-            name="(tabs)"
-            options={{
-              headerTitle: 'Tabs',
-              drawerLabel: 'Tabs',
-              drawerIcon: ({ size, color }) => (
-                <MaterialIcons name="border-bottom" size={size} color={color} />
-              ),
 
-              drawerItemStyle: {
-                display: 'none',
-              },
-              headerRight: () => (
-                <Link href="/modal" asChild>
-                  <HeaderButton />
-                </Link>
-              ),
-            }}
-          />
           <Drawer.Screen
-            name="test"
-            options={{
-              headerShown: false,
-              drawerItemStyle: {
-                display: 'none',
-              },
-            }}
-          />
-          <Drawer.Screen
-            name="(new-tabs)"
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Drawer.Screen
-            name="map"
+            name="mapList"
             options={{
               headerTransparent: true,
               headerTitle: '',

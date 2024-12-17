@@ -1,19 +1,15 @@
 import { useAuthActions } from '@convex-dev/auth/react';
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import {
   DrawerContentComponentProps,
   DrawerContentScrollView,
   DrawerItemList,
 } from '@react-navigation/drawer';
 import { Authenticated, Unauthenticated, useQuery } from 'convex/react';
-import { Link, Redirect } from 'expo-router';
+import { Redirect } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
 import { View } from 'react-native';
 
-import { HeaderButton } from '../../components/HeaderButton';
-
 import { Button } from '~/components/Button';
-import MainHeader from '~/components/MainHeader';
 import Text from '~/components/Text';
 import { api } from '~/convex/_generated/api';
 
@@ -39,7 +35,7 @@ const DrawerLayout = () => {
 
 export default DrawerLayout;
 
-const DrawerContent = (props: DrawerContentComponentProps) => {
+export const DrawerContent = (props: DrawerContentComponentProps) => {
   const { signOut } = useAuthActions();
   const user = useQuery(api.user.currentUser);
 
