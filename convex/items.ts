@@ -123,7 +123,12 @@ export const reserve = mutation({
   args: { id: v.id('items') },
   handler: async (ctx, args) => {
     const author = await getAuthUserId(ctx);
+    const item = await ctx.db.get(args.id);
+    if (!author || !item) {
+      return;
+    }
     await ctx.db.patch(args.id, { status: 'reserved', reservedBy: author! });
+    await ctx.db.insert('chats', { item: item._id, user: author, itemOwner: item.author });
   },
 });
 

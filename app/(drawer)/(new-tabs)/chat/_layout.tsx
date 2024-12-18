@@ -20,14 +20,14 @@ const ChatLayout = () => {
       />
       <Drawer.Screen
         name="[id]"
-        options={{
-          headerTitle: 'Chat',
+        options={({ route }) => ({
+          // @ts-ignore
+          title: route.params?.name ?? 'Chat',
           drawerLabel: 'Chat',
           drawerIcon: ({ size, color }) => (
             <Ionicons name="chatbubble-ellipses-outline" size={size} color={color} />
           ),
-          headerLeft: () => <DrawerToggleButton />,
-        }}
+        })}
       />
     </Drawer>
   );

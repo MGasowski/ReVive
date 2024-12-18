@@ -32,6 +32,21 @@ const schema = defineSchema({
   })
     .index('by_item', ['itemId'])
     .index('by_user', ['userId']),
+
+  chats: defineTable({
+    itemOwner: v.id('users'),
+    user: v.id('users'),
+    item: v.id('items'),
+  }),
+
+  chatMessages: defineTable({
+    chat: v.id('chats'),
+    user: v.id('users'),
+    text: v.string(),
+    createdAt: v.number(),
+  })
+    .index('by_chat', ['chat'])
+    .index('by_user', ['user']),
 });
 
 export default schema;
