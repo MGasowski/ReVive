@@ -178,7 +178,7 @@ export default function AddItemScreen() {
             <Button
               title={address ? 'Change Address' : 'Pick Address'}
               className="bg-primary"
-              onPress={() => router.push('/(drawer)/add-item/address-picker')}
+              onPress={() => router.push('/(drawer)/(new-tabs)/map/add-item/address-picker')}
             />
           </View>
           <Separator />

@@ -38,7 +38,7 @@ const Login = () => {
           behavior="padding"
           className=" w-full flex-1  items-center rounded-t-3xl bg-white ">
           <View className="w-full gap-4 p-4">
-            <View className="mb-8 w-full flex-row gap-4">
+            {/* <View className="mb-8 w-full flex-row gap-4">
               <View className="mt-2 flex-1 flex-row items-center justify-center gap-4 rounded-lg bg-accent p-2">
                 <Ionicons name="logo-google" size={16} color="white" />
                 <Text className="text-white">Google</Text>
@@ -47,7 +47,7 @@ const Login = () => {
                 <Ionicons name="logo-google" size={16} color="white" />
                 <Text className="text-white">Facebook</Text>
               </View>
-            </View>
+            </View> */}
             <TextInput
               placeholder="Email"
               onChangeText={setEmail}
@@ -69,6 +69,7 @@ const Login = () => {
               onPress={() => {
                 signIn('password', { email, password, flow: step }).then(() => {
                   setUser(email);
+                  router.replace('/(drawer)/(new-tabs)/map');
                 });
               }}
             />

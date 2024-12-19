@@ -1,8 +1,8 @@
 import { router } from 'expo-router';
 import { useAtom } from 'jotai';
 import React, { useEffect, useRef, useState } from 'react';
-import { Text, View } from 'react-native';
-import MapView, { Marker, Region } from 'react-native-maps';
+import { Platform, Text, View } from 'react-native';
+import MapView, { Marker, PROVIDER_DEFAULT, PROVIDER_GOOGLE, Region } from 'react-native-maps';
 import { Button } from '~/components/Button';
 import useGetCurrentLocation from '~/hooks/useGetCurrentLocation';
 import { addressAtom, locationAtom } from '~/store/add-item';
@@ -31,6 +31,7 @@ const AddressPicker = () => {
     <>
       <View className="flex-1">
         <MapView
+          provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : PROVIDER_DEFAULT}
           ref={mapRef}
           zoomControlEnabled
           style={{ flex: 1 }}

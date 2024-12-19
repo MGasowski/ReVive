@@ -7,7 +7,7 @@ const FloatingMapButton = () => {
   return (
     <TouchableOpacity
       onPress={() => {
-        router.push('/map');
+        router.push('/(drawer)/(new-tabs)/map/mapList');
       }}
       className="z-100 absolute bottom-8 right-8">
       <View>

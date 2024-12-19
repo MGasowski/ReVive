@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleProp, StyleSheet, ViewStyle } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import { Platform, StyleProp, StyleSheet, ViewStyle } from 'react-native';
+import MapView, { Marker, PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps';
 
 const MapThumbnail = ({
   lat,
@@ -15,6 +15,7 @@ const MapThumbnail = ({
 }) => {
   return (
     <MapView
+      provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : PROVIDER_DEFAULT}
       className={className}
       style={[styles.mapThumbnail, style]}
       region={{

@@ -2,8 +2,15 @@ import { Ionicons } from '@expo/vector-icons';
 import { useQuery } from 'convex/react';
 import { router } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
-import { FlatList, Image, TouchableOpacity, useWindowDimensions, View } from 'react-native';
-import MapView, { Marker, Region } from 'react-native-maps';
+import {
+  FlatList,
+  Image,
+  Platform,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+} from 'react-native';
+import MapView, { Marker, PROVIDER_DEFAULT, PROVIDER_GOOGLE, Region } from 'react-native-maps';
 import Text from '~/components/Text';
 import { api } from '~/convex/_generated/api';
 import { Doc } from '~/convex/_generated/dataModel';
@@ -60,6 +67,7 @@ export default function MapScreen() {
   return (
     <View className="flex-1">
       <MapView
+        provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : PROVIDER_DEFAULT}
         ref={mapRef}
         style={{ flex: 1 }}
         initialRegion={initialRegion ?? undefined}
