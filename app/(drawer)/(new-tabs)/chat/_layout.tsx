@@ -1,8 +1,10 @@
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { DrawerToggleButton } from '@react-navigation/drawer';
 import Drawer from 'expo-router/drawer';
 import React from 'react';
 import { DrawerContent } from '../../_layout';
+import { View } from 'react-native';
+import { router } from 'expo-router';
 
 const ChatLayout = () => {
   return (
@@ -26,6 +28,15 @@ const ChatLayout = () => {
           drawerLabel: 'Chat',
           drawerIcon: ({ size, color }) => (
             <Ionicons name="chatbubble-ellipses-outline" size={size} color={color} />
+          ),
+          headerLeft: () => (
+            <View>
+              <MaterialCommunityIcons
+                name="arrow-left"
+                size={24}
+                onPress={() => router.replace('..')}
+              />
+            </View>
           ),
         })}
       />

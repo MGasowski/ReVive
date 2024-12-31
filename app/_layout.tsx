@@ -1,18 +1,31 @@
 import '../global.css';
 
 import { loadAsync } from 'expo-font';
-import { Stack, useSegments } from 'expo-router';
+import { router, Stack, useSegments } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import Splash from '~/components/Splash';
 import ConvexProvider from '~/utils/convex';
+import * as Notifications from 'expo-notifications';
+import { LogBox } from 'react-native';
 
 export const unstable_settings = {
   initialRouteName: '(auth)',
 };
 
+LogBox.ignoreAllLogs();
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: true,
+  }),
+});
+
 export default function RootLayout() {
+  useNotificationObserver();
   const [isAppReady, setIsAppReady] = useState(false);
   const segmentClient = useSegments();
   console.log(segmentClient);
@@ -63,3 +76,32 @@ const fonts = {
   'Poppins-Thin': require('assets/fonts/Poppins-Thin.ttf'),
   'Poppins-ThinItalic': require('assets/fonts/Poppins-ThinItalic.ttf'),
 };
+
+function useNotificationObserver() {
+  useEffect(() => {
+    let isMounted = true;
+
+    function redirect(notification: Notifications.Notification) {
+      const url = notification.request.content.data?.url;
+      if (url) {
+        router.push(url);
+      }
+    }
+
+    Notifications.getLastNotificationResponseAsync().then((response) => {
+      if (!isMounted || !response?.notification) {
+        return;
+      }
+      redirect(response?.notification);
+    });
+
+    const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
+      redirect(response.notification);
+    });
+
+    return () => {
+      isMounted = false;
+      subscription.remove();
+    };
+  }, []);
+}

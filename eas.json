@@ -1,9 +1,11 @@
 {
   "cli": {
-    "version": ">= 11.0.3"
+    "version": ">= 11.0.3",
+    "appVersionSource": "remote"
   },
   "build": {
     "development": {
+      "autoIncrement": true,
       "env": {
         "CONVEX_DEPLOYMENT": "dev:third-mink-72",
         "EXPO_PUBLIC_CONVEX_URL": "https://third-mink-72.convex.cloud"

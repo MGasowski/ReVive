@@ -128,7 +128,12 @@ export const reserve = mutation({
       return;
     }
     await ctx.db.patch(args.id, { status: 'reserved', reservedBy: author! });
-    await ctx.db.insert('chats', { item: item._id, user: author, itemOwner: item.author });
+    const chatId = await ctx.db.insert('chats', {
+      item: item._id,
+      user: author,
+      itemOwner: item.author,
+    });
+    return chatId;
   },
 });
 

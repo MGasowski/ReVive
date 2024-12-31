@@ -21,7 +21,9 @@
       [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "$(PRODUCT_NAME) needs your location to find nearby items you might like."
+          "locationAlwaysAndWhenInUsePermission": "$(PRODUCT_NAME) needs your location to find nearby items you might like.",
+          "locationAlwaysPermission": "$(PRODUCT_NAME) needs your location to find nearby items you might like.",
+          "locationWhenInUsePermission": "$(PRODUCT_NAME) needs your location to find nearby items you might like."
         }
       ],
       ["expo-font"],

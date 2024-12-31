@@ -7,6 +7,7 @@ import { Image, Keyboard, KeyboardAvoidingView, TouchableOpacity, View } from 'r
 import { ScrollView } from 'react-native-gesture-handler';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import * as Notifications from 'expo-notifications';
 
 import Avatar from '~/components/Avatar';
 import { Button } from '~/components/Button';
@@ -79,12 +80,31 @@ const ItemDetails = () => {
                 {!item?.reservable &&
                   item?.status === 'available' &&
                   currentUser?._id !== item?.author && (
-                    <Button title="Want it!" onPress={() => reserve({ id: item._id! })} />
+                    <Button
+                      title="Want it!"
+                      onPress={async () => {
+                        const chatId = await reserve({ id: item._id! });
+                        console.log({ chatId });
+                        await Notifications.scheduleNotificationAsync({
+                          content: {
+                            title: "You've got it! 📬",
+                            body: 'Your item is reserved! Open a chat to arrange the details.',
+                            data: { url: `/chat/${chatId}` },
+                          },
+                          trigger: {
+                            type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+                            seconds: 2,
+                          },
+                        });
+                      }}
+                    />
                   )}
               </View>
-              <Status status={item?.status ?? 'available'} />
 
-              <Button onPress={() => setIsOpen((prev) => !prev)} title="Options" />
+              <Status status={item?.status ?? 'available'} />
+              {item?.author === currentUser?._id && (
+                <Button onPress={() => setIsOpen((prev) => !prev)} title="Options" />
+              )}
             </View>
           </View>
         </View>
@@ -116,7 +136,9 @@ const ItemDetails = () => {
           </View>
 
           <Separator />
-          <Comments itemId={id} />
+          <View className="min-h-96 flex-1 justify-end">
+            <Comments itemId={id} />
+          </View>
         </View>
         {isOpen && (
           <Animated.View

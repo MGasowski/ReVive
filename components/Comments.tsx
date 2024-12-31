@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   commentContainer: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: 'white',
     padding: 12,
     borderRadius: 8,
     marginBottom: 8,
